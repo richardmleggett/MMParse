@@ -3,4 +3,3 @@ target/generated-sources
 target/maven-archiver
 target/maven-status
 .DS_Store
-docs/build
