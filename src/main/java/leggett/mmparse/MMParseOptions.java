@@ -17,6 +17,8 @@ public class MMParseOptions {
     private String mapFilename = null;
     private String lengthsFilename = null;
     private boolean withWarnings = true;
+    private boolean runningCount = false;
+    private boolean runningMegan = false;
     
     public MMParseOptions() {
     }
@@ -26,15 +28,19 @@ public class MMParseOptions {
         System.out.println("mmparse "+version);
         System.out.println("Comments/queries: richard.leggett@earlham.ac.uk");
         System.out.println("");
-        System.out.println("To parse:");
-        System.out.println("    mmparse -control <filename> -enriched <filename> -lengths <filename> -taxonomy <directory>");
+        System.out.println("To count reads and total bp:");
+        System.out.println("    mmparse -count -control <filename> -enriched <filename> -lengths <filename> -taxonomy <directory>");        
+        System.out.println("");
+        System.out.println("To convert a reads2Taxon file for MEGAN:");
+        System.out.println("    mmparse -megan -input <filename> -taxonomy <directory>");
+        System.out.println("");        
         System.out.println("Where:");
         System.out.println("    -control specifies the name of the control reads2Taxon file to parse");
         System.out.println("    -enriched specifies the name of the enriched reads2Taxon file to parse");
         System.out.println("    -lengths specifies the name of a contig length file");
-        //System.out.println("    -output specifies the output filename prefix");
         System.out.println("    -taxonomy specifies the directory containing NCBI taxonomy files");
         System.out.println("              (files needed are nodes.dmp and names.dmp)");
+                
         System.out.println("");
     }
         
@@ -45,7 +51,13 @@ public class MMParseOptions {
             if ((args[i].equalsIgnoreCase("-help")) || (args[i].equalsIgnoreCase("-h"))) {
                 displayHelp();
                 System.exit(0);
-            } else if (args[i].equalsIgnoreCase("-control")) {
+            } else if (args[i].equalsIgnoreCase("-count")) {
+                runningCount = true;
+                i++;
+            } else if (args[i].equalsIgnoreCase("-megan")) {
+                runningMegan = true;
+                i++;
+            } else if (args[i].equalsIgnoreCase("-control") || args[i].equalsIgnoreCase("-input")) {
                 controlFilename = args[i+1];
                 i+=2;
             } else if (args[i].equalsIgnoreCase("-enriched")) {
@@ -71,17 +83,22 @@ public class MMParseOptions {
             System.exit(0);
         }
         
+        if ((!runningCount) && (!runningMegan)) {
+            System.out.println("Error: you must specify -count or -megan");
+            System.exit(1);
+        }
+        
         if (controlFilename == null) {
             System.out.println("Error: you must specify a -control parameter");
             System.exit(1);
         }
 
-        if (enrichedFilename == null) {
+        if ((runningCount) && (enrichedFilename == null)) {
             System.out.println("Error: you must specify a -enriched parameter");
             System.exit(1);
         }
         
-        if (lengthsFilename == null) {
+        if ((runningCount) && (lengthsFilename == null)) {
             System.out.println("Error: you must specify a -lengths parameter");
             System.exit(1);
         }
@@ -95,6 +112,14 @@ public class MMParseOptions {
             System.out.println("Error: you must specify a -taxonomy parameter");
             System.exit(1);
         }
+    }
+    
+    public boolean isRunningCount() {
+        return runningCount;
+    }
+    
+    public boolean isRunningMegan() {
+        return runningMegan;
     }
     
     public String getControlFilename() {

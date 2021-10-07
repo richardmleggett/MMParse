@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Hashtable;
+import java.util.Set;
 
 public class MMParse {  
     public MMParseOptions options;
@@ -94,9 +95,8 @@ public class MMParse {
             e.printStackTrace();
             System.exit(1);
         }        
-        System.out.println("Reads "+readCount);
-        System.out.println("Size: "+bpCount);
-            
+        System.out.println("Reads " + readCount);
+        System.out.println("Size: " + bpCount);            
     }
     
     public void processMetaMaps() {
@@ -110,11 +110,61 @@ public class MMParse {
         System.out.println("Analysing enriched...");
         analyseMetaMapsFile(options.getEnrichedFilename(), readLengths, taxonomy);
     }
+    
+    public void processMegan() {
+        Taxonomy taxonomy = new Taxonomy(options, options.getTaxonomyDirectory() + "/nodes.dmp", options.getTaxonomyDirectory() + "/names.dmp");  
+        Hashtable<Long, Integer> taxonToCount = new Hashtable<Long, Integer>();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(options.getControlFilename()));
+            String line;
+
+            do {
+                line = br.readLine();
+                if (line != null) {
+                    String[] fields = line.split("\t");
+                    if (fields.length == 2) {
+                        String id = fields[0];
+                        String taxonString = fields[1];
+                        long taxon;
+                        
+                        if (taxonString.startsWith("x")) {
+                            taxon = taxonomy.getMinimapPsuedospecies(taxonString);
+                        } else {
+                            taxon = Integer.parseInt(fields[1]);
+                        }
+                        
+                        int count = 0;
+                        if (taxonToCount.containsKey(taxon)) {
+                            count = taxonToCount.get(taxon);
+                        }
+                        count++;
+                        taxonToCount.put(taxon, count);                        
+                    }
+                }
+            } while (line != null);
+            br.close();            
+        } catch (Exception e) {
+            System.out.println("Exception:");
+            e.printStackTrace();
+            System.exit(1);
+        }        
+        
+        Set<Long> taxa = taxonToCount.keySet();
+        for (Long taxon:taxa) {
+            System.out.println(taxon + "," + taxonToCount.get(taxon));
+        }        
+    }
 
     public static void main(String[] args) {
         MMParseOptions ops = new MMParseOptions();        
         ops.processCommandLine(args);
         MMParse lcap = new MMParse(ops);
-        lcap.processMetaMaps();
+        
+        if (ops.isRunningCount()) {
+            lcap.processMetaMaps();
+        } else if (ops.isRunningMegan()) {
+            lcap.processMegan();
+        }
     }        
 }
