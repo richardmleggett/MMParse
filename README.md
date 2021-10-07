@@ -22,6 +22,6 @@ The taxonomy path leads to a directory containing nodes.dmp and names.dmp.
 
 ## To generate a file suitable for importing to MEGAN
 
-mmparse can also be used to generate a comma separated taxon,abudance file for importing into MEGAN. Use:
+MMParse can also be used to generate a comma separated taxon,count file for importing into MEGAN. Use:
 
     java -jar MMParse.jar -megan -input sample.reads2Taxon -taxonomy /path/to/taxonomy
