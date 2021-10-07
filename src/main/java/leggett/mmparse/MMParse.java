@@ -77,7 +77,7 @@ public class MMParse {
                         }
                         
                         if (taxon > 0) {
-                            if (taxonomy.isTaxonAncestor(taxon, 47420)) {
+                            if (taxonomy.isTaxonAncestor(taxon, options.getTargetTaxon())) {
                                 readCount++;
                                 bpCount += lengths.get(id);
                             }
@@ -162,6 +162,7 @@ public class MMParse {
         MMParse lcap = new MMParse(ops);
         
         if (ops.isRunningCount()) {
+            System.out.println("Target taxon "+ops.getTargetTaxon());
             lcap.processMetaMaps();
         } else if (ops.isRunningMegan()) {
             lcap.processMegan();

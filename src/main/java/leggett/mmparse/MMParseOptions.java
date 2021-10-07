@@ -19,6 +19,7 @@ public class MMParseOptions {
     private boolean withWarnings = true;
     private boolean runningCount = false;
     private boolean runningMegan = false;
+    private long targetTaxon = 47420;
     
     public MMParseOptions() {
     }
@@ -29,7 +30,7 @@ public class MMParseOptions {
         System.out.println("Comments/queries: richard.leggett@earlham.ac.uk");
         System.out.println("");
         System.out.println("To count reads and total bp:");
-        System.out.println("    mmparse -count -control <filename> -enriched <filename> -lengths <filename> -taxonomy <directory>");        
+        System.out.println("    mmparse -count -control <filename> -enriched <filename> -lengths <filename> -taxon <long> -taxonomy <directory>");        
         System.out.println("");
         System.out.println("To convert a reads2Taxon file for MEGAN:");
         System.out.println("    mmparse -megan -input <filename> -taxonomy <directory>");
@@ -38,6 +39,7 @@ public class MMParseOptions {
         System.out.println("    -control specifies the name of the control reads2Taxon file to parse");
         System.out.println("    -enriched specifies the name of the enriched reads2Taxon file to parse");
         System.out.println("    -lengths specifies the name of a contig length file");
+        System.out.println("    -taxon specifies the target taxon");        
         System.out.println("    -taxonomy specifies the directory containing NCBI taxonomy files");
         System.out.println("              (files needed are nodes.dmp and names.dmp)");
                 
@@ -65,6 +67,9 @@ public class MMParseOptions {
                 i+=2;
             } else if (args[i].equalsIgnoreCase("-output")) {
                 outputPrefix = args[i+1];
+                i+=2;
+            } else if (args[i].equalsIgnoreCase("-taxon")) {
+                targetTaxon = Long.parseLong(args[i+1]);
                 i+=2;
             } else if (args[i].equalsIgnoreCase("-taxonomy")) {
                 taxonomyDirectory = args[i+1];
@@ -112,6 +117,10 @@ public class MMParseOptions {
             System.out.println("Error: you must specify a -taxonomy parameter");
             System.exit(1);
         }
+    }
+    
+    public long getTargetTaxon() {
+        return targetTaxon;
     }
     
     public boolean isRunningCount() {
