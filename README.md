@@ -2,6 +2,8 @@
 
 MMParse parses MetaMaps output files. It was originally written for analysis of nanopore adaptive sampling data.
 
+A Java JAR file can be found in the target directory.
+
 ## To analyse enriched yield
 
 Inputs are two .reads2Taxon files, one for the enriched channels, one for control channels.
